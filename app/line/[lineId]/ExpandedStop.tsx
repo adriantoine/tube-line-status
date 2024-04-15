@@ -25,7 +25,6 @@ export function ExpandedStop({
     (g) => g.modeName === "national-rail",
   );
 
-  console.log(data.additionalProperties);
   const monToFriOpeningTime = data.additionalProperties?.find(
     (prop) => prop.category === "Opening Time" && prop.key === "MonFriFrom",
   );
