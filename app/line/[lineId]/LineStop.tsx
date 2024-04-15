@@ -1,7 +1,12 @@
 import { cn, lineBackgroundColor, lineBorderColor } from "@/lib/utils";
 import { ExpandedStop } from "./ExpandedStop";
 import { Suspense, useState } from "react";
-import { CirclePlus, LoaderCircle, TriangleAlert } from "lucide-react";
+import {
+  CircleMinus,
+  CirclePlus,
+  LoaderCircle,
+  TriangleAlert,
+} from "lucide-react";
 import { StationWithHub, StopConnections } from "./StopConnections";
 
 export function LineStop({
@@ -16,13 +21,16 @@ export function LineStop({
   return (
     <div className={cn("relative border-l-8", lineBorderColor(lineId))}>
       <div className="w-full border-b p-4">
-        <button onClick={() => setIsExpanded(true)} className="text-left">
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-left"
+        >
           <div className="flex items-center gap-2 hover:underline">
             {station.hasDisruption && (
               <TriangleAlert size={16} className="text-yellow-600" />
             )}
             <div>{station.name}</div>
-            <CirclePlus />
+            {isExpanded ? <CircleMinus /> : <CirclePlus />}
           </div>
         </button>
 
