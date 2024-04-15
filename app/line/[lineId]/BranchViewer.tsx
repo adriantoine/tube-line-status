@@ -3,46 +3,20 @@
 import { TflApiPresentationEntitiesRouteSequence } from "@/lib/generated-types/tfl-types";
 import { BranchSelector } from "./BranchSelector";
 import { useState } from "react";
-import { compact, flatten, uniqBy } from "lodash-es";
 import StationList from "./StationList";
 import { ChevronLeftCircle } from "lucide-react";
 import Link from "next/link";
+import { getAllStationsWithHub } from "./utils";
 
 export function BranchViewer({
   lineRoute,
 }: {
   lineRoute: TflApiPresentationEntitiesRouteSequence;
 }) {
-  const { orderedLineRoutes, stopPointSequences, stations } = lineRoute;
+  const { orderedLineRoutes } = lineRoute;
   const [selectedRoute, setSelectedRoute] = useState<number>(0);
 
-  const allStations = compact(
-    uniqBy(
-      flatten(stopPointSequences?.map((sequence) => sequence.stopPoint)),
-      (stop) => stop?.id,
-    ),
-  );
-
-  const selectedBranchStationdIds =
-    orderedLineRoutes?.[selectedRoute]?.naptanIds || [];
-
-  const selectedBranchStations =
-    compact(
-      selectedBranchStationdIds?.map((id) =>
-        allStations?.find((station) => station.id === id),
-      ),
-    ) || [];
-
-  const selectedBranchStationsWithHub = selectedBranchStations.map(
-    (currentStation) => {
-      if (currentStation.parentId) {
-        const hub = stations?.find((s) => s.id === currentStation.parentId);
-        return { ...currentStation, hub };
-      }
-
-      return currentStation;
-    },
-  );
+  const allStationsWithHub = getAllStationsWithHub(selectedRoute, lineRoute);
 
   return (
     <div>
@@ -61,10 +35,7 @@ export function BranchViewer({
         </div>
       )}
 
-      <StationList
-        lineId={lineRoute.lineId!}
-        list={selectedBranchStationsWithHub}
-      />
+      <StationList lineId={lineRoute.lineId!} list={allStationsWithHub} />
     </div>
   );
 }
